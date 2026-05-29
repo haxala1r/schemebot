@@ -1,0 +1,4 @@
+(executable
+ (public_name schemebot)
+ (name main)
+ (libraries schemebot))
