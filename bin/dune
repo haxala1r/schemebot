@@ -2,4 +2,6 @@
  (public_name schemebot)
  (name main)
  (libraries schemebot
-            cohttp-lwt-unix))
+            cohttp-lwt-unix
+            yojson
+            str))

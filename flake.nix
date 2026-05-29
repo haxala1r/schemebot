@@ -9,7 +9,7 @@
           version = "0.0.1";
           src = ./.;
 
-          buildInputs = with pkgs.ocamlPackages; [findlib cohttp-lwt-unix lwt];
+          buildInputs = with pkgs.ocamlPackages; [findlib cohttp-lwt-unix yojson lwt];
         };
       shell = pkgs:
         pkgs.mkShell {
