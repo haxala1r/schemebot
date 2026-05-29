@@ -21,6 +21,8 @@ jobs:
           username: turtyboi
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Build and load container
-        run: nix run .#container | docker load
+        run: |
+          nix build .#container
+          ./result | docker load
       - name: Push
         run: docker push turtyboi/schemebot:latest
