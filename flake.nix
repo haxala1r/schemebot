@@ -11,6 +11,29 @@
 
           buildInputs = with pkgs.ocamlPackages; [findlib cohttp-lwt-unix yojson lwt];
         };
+      musl = pkgs:
+        package pkgs.pkgsMusl;
+      container = pkgs:
+        pkgs.dockerTools.streamLayeredImage {
+          name = "turtyboi/schemebot";
+          tag = "latest";
+
+          contents = [
+            (package pkgs)
+            pkgs.chez
+            pkgs.cacert
+          ];
+          config = {
+            Cmd = ["${(package pkgs)}/bin/schemebot"];
+            Env = [
+              "PATH=${pkgs.chez}/bin:/bin"
+              "PORT=8080"
+            ];
+            ExposedPorts = {
+              "8080/tcp" = {};
+            };
+          };
+        };
       shell = pkgs:
         pkgs.mkShell {
           inputsFrom = [(package pkgs)];
@@ -19,7 +42,10 @@
     in
     {
       packages.x86_64-linux.default = package nixpkgs.legacyPackages.x86_64-linux;
+      packages.x86_64-linux.musl = musl nixpkgs.legacyPackages.x86_64-linux;
       packages.aarch64-linux.default = package nixpkgs.legacyPackages.aarch64-linux;
+      packages.aarch64-linux.musl = musl nixpkgs.legacyPackages.aarch64-linux;
+      packages.aarch64-linux.container = container nixpkgs.legacyPackages.aarch64-linux;
       packages.aarch64-darwin.default = package nixpkgs.legacyPackages.aarch64-darwin;
 
       devShells.x86_64-linux.default = shell nixpkgs.legacyPackages.x86_64-linux;
