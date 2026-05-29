@@ -9,12 +9,22 @@
           version = "0.0.1";
           src = ./.;
 
-          buildInputs = with pkgs.ocamlPackages; [];
+          buildInputs = with pkgs.ocamlPackages; [ocsigen_server];
+        };
+      shell = pkgs:
+        pkgs.mkShell {
+          inputsFrom = [(package pkgs)];
+          nativeBuildInputs = [pkgs.ocamlPackages.merlin];
         };
     in
     {
       packages.x86_64-linux.default = package nixpkgs.legacyPackages.x86_64-linux;
-      packages.aarc64-linux.default = package nixpkgs.legacyPackages.aarch64-linux;
+      packages.aarch64-linux.default = package nixpkgs.legacyPackages.aarch64-linux;
       packages.aarch64-darwin.default = package nixpkgs.legacyPackages.aarch64-darwin;
+
+      devShells.x86_64-linux.default = shell nixpkgs.legacyPackages.x86_64-linux;
+      devShells.aarch64-linux.default = shell nixpkgs.legacyPackages.aarch64-linux;
+      devShells.aarch64-darwin.default = shell nixpkgs.legacyPackages.aarch64-darwin;
+      
     };
 }
