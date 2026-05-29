@@ -21,7 +21,7 @@ let push_and_run body =
   Lwt.return out
 
 type recipient =
-  | Channel of int
+  | Channel of int * string
   | Direct of int
 
 (* We need to parse the JSON info from the Zulip request to get the code to run
@@ -40,7 +40,8 @@ let parse_body body =
           | Some "stream" ->
              print_endline "stream!";
              let* id = msgobj |> member "stream_id" |> to_int_option in
-             Some (Channel id)
+             let* topic = msgobj |> member "subject" |> to_string_option in
+             Some (Channel (id, topic))
           | Some "private" ->
              print_endline "direct!";
              let* id = msgobj |> member "sender_id" |> to_int_option in
@@ -64,8 +65,8 @@ let construct_body strs =
 
 let send_msg r email token content =
   let body = match r with
-    |Channel i ->
-      construct_body ["type=stream"; "to="^(string_of_int i); "content=```\n"^content^"\n```"]
+    |Channel (i, topic) ->
+      construct_body ["type=stream"; "to="^(string_of_int i);"topic="^topic; "content=```\n"^content^"\n```"]
     | Direct i ->
        construct_body ["type=direct"; "to=["^(string_of_int i)^"]"; "content="^content]
   in
