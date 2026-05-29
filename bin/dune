@@ -1,4 +1,5 @@
 (executable
  (public_name schemebot)
  (name main)
- (libraries schemebot))
+ (libraries schemebot
+            cohttp-lwt-unix))

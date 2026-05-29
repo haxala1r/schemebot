@@ -15,7 +15,7 @@
  (name schemebot)
  (synopsis "Bot for executing code as a Zulip bot.")
  (description "Executes code through chez scheme whenever invoked and responds with the result. Meant to be deployed on Google Cloud Run.")
- (depends ocaml)
+ (depends ocaml cohttp-lwt-unix)
  (tags
   ("http" "scheme" "bot")))
 

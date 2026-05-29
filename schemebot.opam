@@ -12,6 +12,7 @@ bug-reports: "https://github.com/haxala1r/schemebot/issues"
 depends: [
   "dune" {>= "3.21"}
   "ocaml"
+  "cohttp-lwt-unix"
   "odoc" {with-doc}
 ]
 build: [
