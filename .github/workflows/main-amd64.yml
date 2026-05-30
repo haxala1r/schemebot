@@ -1,11 +1,11 @@
-name: Build and deploy for arm64
+name: Build and deploy for amd64
 on:
   push:
     branches: [ main ]
 
 jobs:
   build:
-    runs-on: ubuntu-24.04-arm
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       
@@ -24,4 +24,4 @@ jobs:
           nix build .#container
           ./result | docker load
       - name: Push
-        run: docker push turtyboi/schemebot:latest-arm64
+        run: docker push turtyboi/schemebot:latest-amd64
