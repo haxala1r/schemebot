@@ -88,19 +88,26 @@ let send_msg r email token content =
 
 
 let handle _conn req body =
-  let meth = req |> Request.meth |> Code.string_of_method in
-  match meth with
-  | "POST" ->
-     let* body = Cohttp_lwt.Body.to_string body in
-     (match parse_body body with
-     | Some (body, recipient, email, token) ->
-        print_endline ("body:"^body);
-        let* output = push_and_run body in
-        let* b = send_msg recipient email token output in
-        Server.respond_string ~status:`OK ~body:b ()
-     | None -> Server.respond_string ~status:`OK ~body:"Invalid body" ())
-  | _ ->
-     Server.respond_string ~status:`OK ~body:"Please make a post request." ()
+  Lwt.catch (fun () ->
+      let meth = req |> Request.meth |> Code.string_of_method in
+      match meth with
+      | "POST" ->
+         let* body = Cohttp_lwt.Body.to_string body in
+         (match parse_body body with
+         | Some (body, recipient, email, token) ->
+            print_endline ("body:"^body);
+            let* output = push_and_run body in
+            let* b = send_msg recipient email token output in
+            Server.respond_string ~status:`OK ~body:b ()
+         | None -> Server.respond_string ~status:`OK ~body:"Invalid body" ())
+      | _ ->
+         Server.respond_string ~status:`OK ~body:"Please make a post request." ())
+    (fun exn ->
+      let msg = Printexc.to_string exn in
+      let backtrace = Printexc.get_backtrace () in
+      Printf.eprintf "Request failed with exception: %s\nBacktrace:\n%s\n%!" msg backtrace;
+      Server.respond_error ~status:`Internal_server_error ~body:"Internal Server Error" ()
+    )
 
 let server =
   Server.create ~mode:(`TCP (`Port port))
