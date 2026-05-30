@@ -95,9 +95,10 @@ let handle _conn req body =
          | Some (body, recipient, email, token) ->
             print_endline ("body:"^body);
             let* output = push_and_run body in
-            let* b = send_msg recipient email token output in
+            let b = "{\"content\": \"```"^output^"```\"}" in
+            (* let* b = send_msg recipient email token output in*)
             Server.respond_string ~status:`OK ~body:b ()
-         | None -> Server.respond_string ~status:`OK ~body:"Invalid body" ())
+         | None -> Server.respond_string ~status:`OK ~body:"{\"content\":\"Invalid body\"}" ())
       | _ ->
          Server.respond_string ~status:`OK ~body:"Please make a post request." ())
     (fun exn ->
