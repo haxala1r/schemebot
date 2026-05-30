@@ -19,19 +19,24 @@ let execute cmd args =
 
 let execute_lang lang file =
   match lang with
+  | "haskell" -> execute "runghc" [|"runghc";file|]
   | "racket" -> execute "racket" [|"racket";"-f";file|]
   | "scheme" -> execute "scheme" [|"scheme"; "--script";file|]
   | _ -> Lwt.return ("couldn't recognize language: "^lang)
 
 let get_ext = function
-  | "racket" -> "rkt"
-  | "scheme" -> "scm"
-  | _ -> failwith "invalid language"
+  | "haskell" -> Some "hs"
+  | "racket" -> Some "rkt"
+  | "scheme" -> Some "scm"
+  | _ -> None
 
 let push_and_run lang body =
-  let* s = write_to_tmp_file (get_ext lang) body in
-  let* out = execute_lang lang s in
-  Lwt.return out
+  match (get_ext lang) with
+  | Some ext ->
+     let* s = write_to_tmp_file ext body in
+     let* out = execute_lang lang s in
+     Lwt.return out
+  | None -> Lwt.return ("Unknown language: "^lang)
 
 let split_code code =
   print_endline ("splitting: "^code);

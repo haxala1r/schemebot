@@ -22,6 +22,7 @@
             (package pkgs)
             pkgs.chez
             pkgs.racket
+            pkgs.ghc
             pkgs.cacert
             pkgs.iana-etc
           ];
