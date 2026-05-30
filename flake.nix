@@ -45,6 +45,7 @@
     {
       packages.x86_64-linux.default = package nixpkgs.legacyPackages.x86_64-linux;
       packages.x86_64-linux.musl = musl nixpkgs.legacyPackages.x86_64-linux;
+      packages.x86_64-linux.container = container nixpkgs.legacyPackages.x86_64-linux;
       packages.aarch64-linux.default = package nixpkgs.legacyPackages.aarch64-linux;
       packages.aarch64-linux.musl = musl nixpkgs.legacyPackages.aarch64-linux;
       packages.aarch64-linux.container = container nixpkgs.legacyPackages.aarch64-linux;
