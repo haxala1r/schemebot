@@ -35,7 +35,7 @@ let push_and_run lang body =
 
 let split_code code =
   print_endline ("splitting: "^code);
-  let pattern = Str.regexp " " in
+  let pattern = Str.regexp "[ \r\n\t]" in
   let parts = Str.bounded_split pattern code 2 in
   match parts with
   | lang :: code :: _ -> Some (lang, code)
