@@ -23,6 +23,8 @@
             pkgs.chez
             pkgs.racket
             pkgs.ghc
+            pkgs.lua
+            pkgs.ruby
             pkgs.cacert
             pkgs.iana-etc
           ];

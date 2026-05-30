@@ -22,12 +22,16 @@ let execute_lang lang file =
   | "haskell" -> execute "runghc" [|"runghc";file|]
   | "racket" -> execute "racket" [|"racket";"-f";file|]
   | "scheme" -> execute "scheme" [|"scheme"; "--script";file|]
+  | "lua" -> execute "lua" [|"lua";file|]
+  | "ruby" -> execute "ruby" [|"ruby";file|]
   | _ -> Lwt.return ("couldn't recognize language: "^lang)
 
 let get_ext = function
   | "haskell" -> Some "hs"
   | "racket" -> Some "rkt"
   | "scheme" -> Some "scm"
+  | "lua" -> Some "lua"
+  | "ruby" -> Some "rb"
   | _ -> None
 
 let push_and_run lang body =
