@@ -5,6 +5,8 @@ open Cohttp
 open Cohttp_lwt_unix
 
 let port = int_of_string (Unix.getenv "PORT")
+let email = Unix.getenv "EMAIL"
+let token = Unix.getenv "TOKEN"
 
 let write_to_tmp_file body =
   let s = "test.scm" in
@@ -63,7 +65,7 @@ let construct_body strs =
   String.concat "&" strs
 
 
-let send_msg r email token content =
+let send_msg r _ _ content =
   let body = match r with
     |Channel (i, topic) ->
       construct_body ["type=stream"; "to="^(string_of_int i);"topic="^topic; "content=```\n"^content^"\n```"]
