@@ -21,7 +21,7 @@
           contents = [
             (package pkgs)
             pkgs.chez
-            pkgs.ghc
+            pkgs.racket
             pkgs.cacert
             pkgs.iana-etc
           ];

@@ -19,12 +19,12 @@ let execute cmd args =
 
 let execute_lang lang file =
   match lang with
-  | "haskell" -> execute "runghc" [|"runghc";file|]
+  | "racket" -> execute "racket" [|"racket";"-f";file|]
   | "scheme" -> execute "scheme" [|"scheme"; "--script";file|]
   | _ -> Lwt.return ("couldn't recognize language: "^lang)
 
 let get_ext = function
-  | "haskell" -> "hs"
+  | "racket" -> "rkt"
   | "scheme" -> "scm"
   | _ -> failwith "invalid language"
 
