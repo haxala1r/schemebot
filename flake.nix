@@ -22,10 +22,12 @@
             (package pkgs)
             pkgs.chez
             pkgs.cacert
+            pkgs.iana-etc
           ];
           config = {
             Cmd = ["${(package pkgs)}/bin/schemebot"];
             Env = [
+              "SSL_CERT_FILE=/etc/ssl/certs/ca-bundle.crt"
               "PATH=${pkgs.chez}/bin:/bin"
               "PORT=8080"
             ];
