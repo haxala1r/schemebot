@@ -1,7 +1,7 @@
 (executable
  (public_name schemebot)
  (name main)
- (libraries schemebot
+ (libraries
             cohttp-lwt-unix
             yojson
             str
