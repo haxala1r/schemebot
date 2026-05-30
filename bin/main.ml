@@ -7,7 +7,8 @@ open Cohttp_lwt_unix
 let port = int_of_string (Unix.getenv "PORT")
 
 let write_to_tmp_file body =
-  let* (s, c) = Lwt_io.open_temp_file () in
+  let s = "test.scm" in
+  let* c = Lwt_io.open_file ~mode:(Lwt_io.Output) s in
   let* () = Lwt_io.write c body in
   Lwt.return s
 
