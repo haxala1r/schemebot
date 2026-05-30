@@ -75,7 +75,10 @@ let handle _conn req body =
          (match parse_body body with
          | Some (lang, code) ->
             let* output = push_and_run lang code in
-            let b = "{\"content\": \"```"^output^"```\"}" in
+            let b = `Assoc [
+                        ("content", `String output)
+                      ] in
+            let b = Yojson.Basic.to_string b in
             Server.respond_string ~status:`OK ~body:b ()
          | None -> Server.respond_string ~status:`OK ~body:"{\"content\":\"Invalid body\"}" ())
       | _ ->
