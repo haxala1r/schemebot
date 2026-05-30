@@ -16,11 +16,8 @@ let execute cmd args =
   let c = (cmd, args) in
   Lwt_process.pread ~timeout:1. ~env:(Unix.environment ()) c
 let push_and_run body =
-  print_endline "test1";
   let* s = write_to_tmp_file body in
-  print_endline "test2";
   let* out = execute "scheme" [|"scheme"; "--script"; s|] in
-  print_endline "test3";
   print_endline ("got output: "^out);
   Lwt.return out
 
@@ -39,7 +36,6 @@ let parse_body body =
   let json = Yojson.Basic.from_string body in
   let getstr s = json |> member s |> to_string_option in
   let msgobj = json |> member "message" in
-  print_endline "heck";
   let* r = (match msgobj |> member "type" |> to_string_option with
           | Some "stream" ->
              print_endline "stream!";
