@@ -24,4 +24,6 @@ jobs:
           nix build .#container
           ./result | docker load
       - name: Push
-        run: docker push turtyboi/schemebot:latest-amd64
+        run: |
+          docker tag turtyboi/schemebot:latest turtyboi/schemebot:latest-amd64
+          docker push turtyboi/schemebot:latest-amd64
