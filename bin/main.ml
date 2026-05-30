@@ -6,24 +6,40 @@ open Cohttp_lwt_unix
 
 let port = int_of_string (Unix.getenv "PORT")
 
-let write_to_tmp_file body =
-  let s = "test.scm" in
+let write_to_tmp_file ext body =
+  let s = "test."^ext in
   let* c = Lwt_io.open_file ~mode:(Lwt_io.Output) s in
   let* () = Lwt_io.write c body in
+  let* () = Lwt_io.close c in
   Lwt.return s
 
 let execute cmd args =
   let c = (cmd, args) in
   Lwt_process.pread ~timeout:1. ~env:(Unix.environment ()) c
-let push_and_run body =
-  let* s = write_to_tmp_file body in
-  let* out = execute "scheme" [|"scheme"; "--script"; s|] in
-  print_endline ("got output: "^out);
+
+let execute_lang lang file =
+  match lang with
+  | "haskell" -> execute "runghc" [|"runghc";file|]
+  | "scheme" -> execute "scheme" [|"scheme"; "--script";file|]
+  | _ -> Lwt.return ("couldn't recognize language: "^lang)
+
+let get_ext = function
+  | "haskell" -> "hs"
+  | "scheme" -> "scm"
+  | _ -> failwith "invalid language"
+
+let push_and_run lang body =
+  let* s = write_to_tmp_file (get_ext lang) body in
+  let* out = execute_lang lang s in
   Lwt.return out
 
-type recipient =
-  | Channel of int * string
-  | Direct of int
+let split_code code =
+  print_endline ("splitting: "^code);
+  let pattern = Str.regexp " " in
+  let parts = Str.bounded_split pattern code 2 in
+  match parts with
+  | lang :: code :: _ -> Some (lang, code)
+  | _ -> None
 
 (* We need to parse the JSON info from the Zulip request to get the code to run
    as well as the authentication token, and the person sending the message...
@@ -35,10 +51,10 @@ let parse_body body =
   let json = Yojson.Basic.from_string body in
   let* data = json |> member "data" |> to_string_option in
   (* We Assume that the data is between ``` and ``` *)
-  let pattern = Str.regexp "```[a-zA-Z]*\n?" in
+  let pattern = Str.regexp "```" in
   let parts = Str.split pattern (" "^data) in
   (match parts with
-  | _ :: code :: _ -> Some code
+  | _ :: code :: _ -> split_code code
   | _ -> None)
 
 let construct_body strs =
@@ -52,8 +68,8 @@ let handle _conn req body =
       | "POST" ->
          let* body = Cohttp_lwt.Body.to_string body in
          (match parse_body body with
-         | Some code ->
-            let* output = push_and_run code in
+         | Some (lang, code) ->
+            let* output = push_and_run lang code in
             let b = "{\"content\": \"```"^output^"```\"}" in
             Server.respond_string ~status:`OK ~body:b ()
          | None -> Server.respond_string ~status:`OK ~body:"{\"content\":\"Invalid body\"}" ())
