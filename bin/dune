@@ -4,4 +4,5 @@
  (libraries schemebot
             cohttp-lwt-unix
             yojson
-            str))
+            str
+            tls-lwt))
