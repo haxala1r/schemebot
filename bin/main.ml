@@ -15,7 +15,7 @@ let write_to_tmp_file ext body =
 
 let execute cmd args =
   let c = (cmd, args) in
-  Lwt_process.pread ~timeout:1. ~env:(Unix.environment ()) c
+  Lwt_process.pread ~timeout:15. ~env:(Unix.environment ()) c
 
 let execute_lang lang file =
   match lang with
