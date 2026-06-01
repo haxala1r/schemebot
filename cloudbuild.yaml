@@ -1,0 +1,16 @@
+steps:
+  - name: "nixos/nix"
+    script: |
+      echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
+      nix build .#container > image.tar
+  - name: gcr.io/cloud-builders/docker
+    script:
+      docker load -i image.tar
+      docker tag turtyboi/schemebot:latest europe-west3-docker.pkg.dev/$PROJECT_ID/main/schemebot:latest
+
+images:
+  - "europe-west3-docker.pkg.dev/$PROJECT_ID/main/schemebot:latest"
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  
