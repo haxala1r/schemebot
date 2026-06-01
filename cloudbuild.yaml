@@ -2,7 +2,8 @@ steps:
   - name: "nixos/nix"
     script: |
       echo "experimental-features = nix-command flakes" >> /etc/nix/nix.conf
-      nix run .#container > image.tar
+      nix build .#container
+      ./result > image.tar
   - name: gcr.io/cloud-builders/docker
     env:
       - 'PROJECT_ID=$PROJECT_ID'
